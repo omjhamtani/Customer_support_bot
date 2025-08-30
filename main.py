@@ -1,8 +1,13 @@
+# main.py
+
 import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware # <--- ADD THIS LINE
 from dotenv import load_dotenv
 
+# LangChain components
+# ... (rest of the imports)
 # LangChain components
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain.vectorstores import FAISS
@@ -20,11 +25,30 @@ if not GOOGLE_API_KEY:
     raise ValueError("GOOGLE_API_KEY not found. Please set it in your .env file.")
 
 # Initialize the FastAPI app
+# main.py
+
+# ... (after imports)
+
+# Initialize the FastAPI app
 app = FastAPI(
     title="Goodluck Cafe Support Bot",
     description="An AI assistant for Goodluck Cafe based on a knowledge base.",
     version="1.0.0"
 )
+
+# --- ADD THIS ENTIRE BLOCK ---
+# This allows your frontend to communicate with your backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
+# --- END OF BLOCK ---
+
+# --- 2. STARTUP EVENT: LOAD AND PROCESS KNOWLEDGE BASE ---
+# ... (rest of your file)
 
 # In-memory storage for our vector store
 # This will be populated at startup
